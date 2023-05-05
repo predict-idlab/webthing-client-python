@@ -34,6 +34,7 @@ class WebthingClient:
             self._ws_uri = f"wss://{self._webthing_fqdn}/websocket-stomp"
         else:
             self._ws_uri = f"ws://{self._webthing_fqdn}/websocket-stomp"
+        self._ws = StompWebsocket(self._ws_uri)
 
         if self._secure:
             self._webthing_url = f"https://{self._webthing_fqdn}"
@@ -46,7 +47,6 @@ class WebthingClient:
             callback(relative_uri, observation)
 
     def _ws_subscribe(self, relative_uri: str, callback: Callable[[str, str], None]) -> str:
-        self._ws = StompWebsocket(self._ws_uri)
         # Websocket expects "absolute" uri, make this transparent to the user
         self._ws.subscribe(f"/{relative_uri}", lambda destination, message: callback(destination.lstrip('/'), message))
 
