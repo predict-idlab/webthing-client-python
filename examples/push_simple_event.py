@@ -59,4 +59,6 @@ def push_simple_event_datetime(webthing_fqdn: str, property_uri: str, from_: dat
         [stimulus],
         description=description
     )
-    client.send_create_event_action(event)
+    resp = client.send_create_event_action(event)
+    if not resp.ok:
+        print(resp.text)

@@ -1,5 +1,6 @@
 from typing import Callable, Dict, List, Tuple, Set
 import requests
+from requests import Response
 
 from .utils import get_relative_uri, datetime_utc_now
 from .stomp import StompWebsocket
@@ -105,15 +106,12 @@ class WebthingClient:
             self._ws_subscribe(self._ACTIONS_URI, self._process_action)
         self._action_callbacks.append((callback, type, filter_created))
 
-    def _send_action(self, action: Action) -> bool:
+    def _send_action(self, action: Action) -> Response:
         self._actions_created.add(action.hash())
         response = requests.post(f"{self._webthing_url}/{self._ACTIONS_URI}", json=action.get_value())
-        return response.ok
+        return response
 
-
-
-
-    def send_create_event_action(self, event: Event, stream: bool=False) -> bool:
+    def send_create_event_action(self, event: Event, stream: bool=False) -> Response:
         """Send a CreateEventAction for the given Event.
 
         Args:
@@ -121,32 +119,31 @@ class WebthingClient:
             stream (bool, optional): If the event should be processed as realtime, only do this if near realtime. Defaults to False.
 
         Returns:
-            bool: If the operation was successful.
+            response (requests.Response): Response from the Web Thing
         """
         action = CreateEventAction(None, event, stream)
         return self._send_action(action)
 
-
-    def send_update_event_action(self, event: Event) -> bool:
+    def send_update_event_action(self, event: Event) -> Response:
         """Send a UpdateEventAction for the given Event.
 
         Args:
             event (Event): Updated Event.
 
         Returns:
-            bool: If the operation was successful.
+            response (requests.Response): Response from the Web Thing
         """
         action = UpdateEventAction(None, event)
         return self._send_action(action)
 
-    def send_delete_event_action(self, relative_uri: str) -> bool:
+    def send_delete_event_action(self, relative_uri: str) -> Response:
         """Send a DeleteEventAction for the given Event relative URI.
 
         Args:
             event (Event): Relative URI of the to be deleted event.
 
         Returns:
-            bool: If the operation was successful.
+            response (requests.Response): Response from the Web Thing
         """
         action = DeleteEventAction(None, relative_uri)
         return self._send_action(action)
