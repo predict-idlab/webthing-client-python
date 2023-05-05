@@ -119,7 +119,7 @@ class WebthingClient:
             stream (bool, optional): If the event should be processed as realtime, only do this if near realtime. Defaults to False.
 
         Returns:
-            response: Response from the Web Thing (requests.Response)
+            response (requests.Response): Response from the Web Thing
         """
         action = CreateEventAction(None, event, stream)
         return self._send_action(action)
@@ -131,7 +131,7 @@ class WebthingClient:
             event (Event): Updated Event.
 
         Returns:
-            response: Response from the Web Thing (requests.Response)
+            response (requests.Response): Response from the Web Thing
         """
         action = UpdateEventAction(None, event)
         return self._send_action(action)
@@ -143,7 +143,7 @@ class WebthingClient:
             event (Event): Relative URI of the to be deleted event.
 
         Returns:
-            response: Response from the Web Thing (requests.Response)
+            response (requests.Response): Response from the Web Thing
         """
         action = DeleteEventAction(None, relative_uri)
         return self._send_action(action)
