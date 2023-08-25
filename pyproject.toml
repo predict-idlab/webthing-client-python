@@ -1,8 +1,13 @@
 [tool.poetry]
 name = "webthing_client"
-version = "0.1.0"
-description = ""
+version = "0.1.1"
+description = "Client for the Dynamic Dashboard Web Things"
 authors = ["Emile Deman"]
+maintainers = [
+	"Stef Pletinck <s@stefpletinck.be>"
+]
+readme = "README.md"
+repository = "https://github.com/predict-idlab/webthing-client-python"
 
 [tool.poetry.dependencies]
 python = "^3.8"
