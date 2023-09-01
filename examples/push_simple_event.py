@@ -1,7 +1,7 @@
 from datetime import datetime
 
-from webthing.event import Event, Stimulus
-from webthing.client import WebthingClient
+from webthing_client.event import Event, Stimulus
+from webthing_client.client import WebthingClient
 
 
 def push_simple_event(webthing_fqdn: str, property_uri: str, from_: str, to: str, description: str):

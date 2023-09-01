@@ -1,6 +1,6 @@
 
-from webthing.action import ActionType, Action, CreateEventAction, UpdateEventAction, DeleteEventAction
-from webthing.client import WebthingClient
+from webthing_client.action import ActionType, Action, CreateEventAction, UpdateEventAction, DeleteEventAction
+from webthing_client.client import WebthingClient
 
 
 def callback(action: Action) -> None:

@@ -1,6 +1,6 @@
 
-from webthing.event import Event
-from webthing.client import WebthingClient
+from webthing_client.event import Event
+from webthing_client.client import WebthingClient
 
 
 def callback(event: Event) -> None:

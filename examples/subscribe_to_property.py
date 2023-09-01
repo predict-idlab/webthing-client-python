@@ -1,6 +1,6 @@
 
-from webthing.client import WebthingClient
-from webthing.observation import Observation
+from webthing_client.observation import Observation
+from webthing_client.client import WebthingClient
 
 
 def callback(property_uri: str, observation: Observation) -> None:
