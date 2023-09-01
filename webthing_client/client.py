@@ -14,12 +14,15 @@ class WebthingClient:
     _EVENTS_URI = "events"
     _ACTIONS_URI = "actions"
 
-    def __init__(self, webthing_fqdn: str, secure: bool = True):
-        """Client for interacting with a Webthing.
+    def __init__(self, webthing_fqdn: str, secure: bool = True, websocket: bool = True):
+        """
+        Client for interacting with a Webthing.
 
         Args:
             webthing_fqdn (str): The fully quallified domain name e.g. 'webthing.example.com'.
             secure (bool, optional): If the Webthing uses TLS (https and wss). Defaults to True.
+            websocket (bool, optional): If the websocket should be opened. Defaults to True.
+                                        All websocket (subcribe) related functions will fail if set to False.
         """
         self._webthing_fqdn: str = webthing_fqdn.strip('/')
         self._secure = secure
@@ -33,7 +36,11 @@ class WebthingClient:
             self._ws_uri = f"wss://{self._webthing_fqdn}/websocket-stomp"
         else:
             self._ws_uri = f"ws://{self._webthing_fqdn}/websocket-stomp"
-        self._ws = StompWebsocket(self._ws_uri)
+        
+        if websocket:
+            self._ws = StompWebsocket(self._ws_uri)
+        else:
+            self._ws = None
 
         if self._secure:
             self._webthing_url = f"https://{self._webthing_fqdn}"
@@ -110,9 +117,6 @@ class WebthingClient:
         response = requests.post(f"{self._webthing_url}/{self._ACTIONS_URI}", json=action.get_value())
         return response.ok
 
-
-
-
     def send_create_event_action(self, event: Event, stream: bool=False) -> bool:
         """Send a CreateEventAction for the given Event.
 
@@ -125,7 +129,6 @@ class WebthingClient:
         """
         action = CreateEventAction(None, event, stream)
         return self._send_action(action)
-
 
     def send_update_event_action(self, event: Event) -> bool:
         """Send a UpdateEventAction for the given Event.
