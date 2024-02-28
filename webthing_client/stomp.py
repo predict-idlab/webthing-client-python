@@ -22,8 +22,8 @@ class StompWebsocket:
         self._verbose = verbose
 
         self._connected = False
-        self._backlog_subscriptions: Dict[str, List[Callable[[str, str], None]]] = {}
-        self._subscriptions: Dict[str, List[Callable[[str, str], None]]] = {}
+        self._backlog_subscriptions: Dict[str, List[Callable[[str], None]]] = {}
+        self._subscriptions: Dict[str, List[Callable[[str], None]]] = {}
         self._next_sub_id  = 0
 
         self._init_websocket()
@@ -54,7 +54,7 @@ class StompWebsocket:
                 callbacks = self._subscriptions[destination]
                 # Call all callbacks
                 for callback in callbacks:
-                    callback(destination, message['body'])
+                    callback(message['body'])
 
     def _connected_message(self):
         self._connected = True
@@ -81,12 +81,12 @@ class StompWebsocket:
         self._init_websocket()
 
 
-    def subscribe(self, destination: str, callback: Callable[[str, str], None]) -> None:
+    def subscribe(self, destination: str, callback: Callable[[str], None]) -> None:
         """Subscribe to a destination on websocket.
 
         Args:
             destination (str): Destination string.
-            callback (Callable[[str, str], None]): Callback for message, first argument is destination provided and second the message.
+            callback (Callable[[str], None]): Callback for string message.
         """
         # If not yet connected push to backlog
         if self._connected == False:
@@ -94,10 +94,12 @@ class StompWebsocket:
         else:
             self._subscribe(destination, callback)
 
-    def _subscribe(self, destination: str, callback: Callable[[str, str], None]):
+    def _subscribe(self, destination: str, callback: Callable[[str], None]):
+        # Subscribe if no subscriptions
+        if len(self._subscriptions.get(destination, [])) == 0:
+            self._ws.send(stomper.subscribe(destination, f"sub-{self._next_sub_id}", ack="auto"))
+            self._next_sub_id += 1
         self._subscriptions.setdefault(destination, []).append(callback)
-        self._ws.send(stomper.subscribe(destination, f"sub-{self._next_sub_id}", ack="auto"))
-        self._next_sub_id += 1
 
     def send(self, destination: str, message: str) -> None:
         """Send a message to websocket on provided destination.

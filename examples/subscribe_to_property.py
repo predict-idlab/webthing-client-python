@@ -1,23 +1,22 @@
 
-from webthing_client.observation import Observation
 from webthing_client.client import WebthingClient
+from webthing_client.model.webthing_observation import WebthingObservation
 
 
-def callback(property_uri: str, observation: Observation) -> None:
-    """Callback for observations.
+def callback(observation: WebthingObservation) -> None:
+    """New observation callback.
 
     Args:
-        property_uri (str): Property (relative) uri | 'things/example.thing/properties/example.property'
-        observation (Observation): Observation on Property | '{"timestamp": "2023-01-01T12:00:00.000Z", "value": 100}'
+        observation (WebthingObservation): New WebthingObservation.
     """
-    print(f"<{property_uri}>: {observation}")
+    print(f"New Observation at {observation.timestamp}: {observation.value}")
 
-def subscribe_to_property(webthing_fqdn: str, property_uri: str):
-    """Subscribe to Observations of a Property.
+def subscribe_to_property(webthing_fqdn: str, property_iri: str):
+    """Subscribe to a property on webthing.
 
     Args:
         webthing_fqdn (str): Fully qualified domain name | 'webthing.example.com'
-        property_uri (str): Property (relative) uri | 'things/example.thing/properties/example.property'
+        property_iri (str): Property IRI | 'http://test.invalid/property/1'
     """
     client = WebthingClient(webthing_fqdn)
-    client.subscribe_resource(property_uri, callback)
+    client.subscribe_to_property(callback)
