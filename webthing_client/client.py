@@ -471,20 +471,19 @@ class WebthingClient:
         """
         return self.get_user(self._user_iri)
     
-    def get_observations(self, property_iri: str, from_time: Optional[datetime]=None, to_time: Optional[datetime]=None, fill_window: Optional[bool]=None) -> List[WebthingObservation[PT]]:
+    def get_observations(self, property_iri: str, from_time: Optional[datetime]=None, to_time: Optional[datetime]=None) -> List[WebthingObservation[PT]]:
         """Get observations for property. 
 
         Args:
             property_iri (str): The IRI of the property.
             from_time (Optional[datetime], optional): The start date. Defaults to None.
             to_time (Optional[datetime], optional): The end date. Defaults to None.
-            fill_window (Optional[bool], optional): If from should be later than the earliest observation timestamp. Defaults to None.
 
         Returns:
             List[WebthingObservation[PT]]: The observations.
         """
         json_array: List[Dict[str, Any]] = self._api_requester.call('get_property_observations',
-            PropertyObservationsInput.to_json_object(property_iri, from_time, to_time, fill_window))
+            PropertyObservationsInput.to_json_object(property_iri, from_time, to_time))
         return [WebthingObservation.from_json_object(observation_object) for observation_object in json_array]
     
     def get_last_observation(self, property_iri: str) -> Optional[WebthingObservation]:
