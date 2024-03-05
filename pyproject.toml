@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "webthing-client"
-version = "0.2.1"
+version = "0.2.2"
 description = "Client for the Dynamic Dashboard Webthings"
 authors = ["Emile Deman"]
 maintainers = [
