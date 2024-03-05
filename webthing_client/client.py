@@ -1,6 +1,7 @@
 from datetime import datetime
 import json
 from typing import *
+import requests
 
 from standard_api.api_handler import ApiRequester
 
@@ -498,3 +499,62 @@ class WebthingClient:
         json_object: Dict[str, Any] = self._api_requester.call('get_property_last_observation',
             IRIInput.to_json_object(property_iri))
         return WebthingObservation.from_json_object(json_object)
+
+
+class WebthingAdminClient:
+    """Class for admin endpoints on webthing."""
+
+    def __init__(self, webthing_fqdn: str, secure: bool=True):
+        """Client for admin endpoints.
+
+        Args:
+            webthing_fqdn (str): The fully quallified domain name e.g. 'webthing.example.com'.
+            secure (bool, optional):  If the Webthing uses TLS (https). Defaults to True.
+        """
+        self._webthing_fqdn: str = webthing_fqdn.strip('/')
+        self._secure: bool = secure
+
+        if self._secure:
+            self._webthing_url = f"https://{self._webthing_fqdn}"
+        else:
+            self._webthing_url = f"http://{self._webthing_fqdn}"
+
+
+    def get_graph(self, graph_iri: Optional[str]) -> str:
+        """Get the graph with graph IRI, if graph_iri is null then get the default graph.
+
+        Args:
+            graph_iri (Optional[str]): The graph IRI
+
+        Returns:
+            str: The graph as Turtle.
+        """
+        response: requests.Response = requests.get(self._webthing_url + "/admin/get_graph", params={'graph': encode_uri_component(graph_iri)})
+        return response.text
+
+    def delete_graph(self, graph_iri: Optional[str]) -> None:
+        """Delete the graph with graph IRI, if graph_iri is null then delete the default graph.
+
+        Args:
+            graph_iri (Optional[str]): The graph IRI
+        """
+        response: requests.Response = requests.get(self._webthing_url + "/admin/delete_graph", params={'graph': encode_uri_component(graph_iri)})
+        return response.text
+    
+    def replace_graph(self, graph: str, graph_iri: Optional[str]) -> None:
+        """Replace the graph with graph IRI, if graph_iri is null then replace the default graph.
+
+        Args:
+            graph (str): The new graph in Turtle
+            graph_iri (Optional[str]): The graph IRI
+        """
+        response: requests.Response = requests.post(self._webthing_url + "/admin/replace_graph",
+                                                    headers={'Content-type': 'text/turtle'},
+                                                    params={'graph': encode_uri_component(graph_iri)},
+                                                    data=graph)
+        return response.text
+
+    def reload(self) -> None:
+        """Reload the webthing.
+        """
+        requests.Response = requests.get(self._webthing_url + "/admin/reload")

@@ -50,5 +50,5 @@ def datetime_utc_now() -> datetime:
     """
     return datetime.now(timezone.utc)
 
-def encode_uri_component(uri_component: str):
-    return quote(uri_component, safe="!~*'()")
+def encode_uri_component(uri_component: Optional[str]):
+    return quote(uri_component, safe="!~*'()") if uri_component is not None else None
