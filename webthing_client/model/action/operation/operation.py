@@ -2,6 +2,7 @@ from __future__ import annotations # Allow referencing enclosing class in typing
 from typing import *
 from abc import ABCMeta, abstractmethod
 
+from ...ontology import WETHING_ONTOLOGY_PREFIX
 from ...event.event import Event
 from ...event.event_type import EventType
 
@@ -104,7 +105,7 @@ class DeleteOperation(Operation[DT], metaclass=ABCMeta):
 
 class CreateEventOperation(CreateOperation[Event]):
 
-    type: ClassVar[str] = 'http://webthing.invalid/ontology/CreateEventOperation'
+    type: ClassVar[str] = WETHING_ONTOLOGY_PREFIX + 'CreateEventOperation'
 
 
     def __init__(self, create: Event) -> None:
@@ -127,7 +128,7 @@ class CreateEventOperation(CreateOperation[Event]):
 
 class UpdateEventOperation(UpdateOperation[Event]):
 
-    type: ClassVar[str] = 'http://webthing.invalid/ontology/UpdateEventOperation'
+    type: ClassVar[str] = WETHING_ONTOLOGY_PREFIX + 'UpdateEventOperation'
 
 
     def __init__(self, update: Event) -> None:
@@ -150,7 +151,7 @@ class UpdateEventOperation(UpdateOperation[Event]):
 
 class DeleteEventOperation(DeleteOperation[Event]):
 
-    type: ClassVar[str] = 'http://webthing.invalid/ontology/DeleteEventOperation'
+    type: ClassVar[str] = WETHING_ONTOLOGY_PREFIX + 'DeleteEventOperation'
 
 
     def __init__(self, resource_iri: str) -> None:
@@ -170,7 +171,7 @@ class DeleteEventOperation(DeleteOperation[Event]):
 
 class UpdateEventTypeOperation(UpdateOperation[EventType]):
 
-    type: ClassVar[str] = 'http://webthing.invalid/ontology/UpdateEventOperation'
+    type: ClassVar[str] = WETHING_ONTOLOGY_PREFIX + 'UpdateEventOperation'
 
 
     def __init__(self, update: EventType) -> None:

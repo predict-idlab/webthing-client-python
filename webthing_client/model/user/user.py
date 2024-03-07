@@ -1,10 +1,12 @@
 from __future__ import annotations # Allow referencing enclosing class in typings
 from typing import *
 
+from ..ontology import WETHING_ONTOLOGY_PREFIX
+
 
 class User:
 
-    type: ClassVar[str] = 'http://webthing.invalid/ontology/User'
+    type: ClassVar[str] = WETHING_ONTOLOGY_PREFIX + 'User'
 
 
     iri: str
@@ -36,7 +38,7 @@ class User:
 
 class UserSettings:
 
-    type: ClassVar[str] = 'http://webthing.invalid/ontology/UserSettings'
+    type: ClassVar[str] = WETHING_ONTOLOGY_PREFIX + 'UserSettings'
 
     iri: ClassVar[str] = None
 

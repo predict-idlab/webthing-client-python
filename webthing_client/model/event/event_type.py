@@ -1,12 +1,13 @@
 from __future__ import annotations # Allow referencing enclosing class in typings
 from typing import *
 
+from ..ontology import WETHING_ONTOLOGY_PREFIX
 from .feedback import Feedback
 
 
 class EventType:
 
-    type: ClassVar[str] = 'http://webthing.invalid/ontology/EventType'
+    type: ClassVar[str] = WETHING_ONTOLOGY_PREFIX + 'EventType'
 
 
     iri: str
@@ -58,7 +59,7 @@ class EventType:
     
     def to_json_object_blank(self) -> Dict[str, Any]:
         return {
-            '$class': 'http://webthing.invalid/ontology/BlankEventType',
+            '$class': WETHING_ONTOLOGY_PREFIX + 'BlankEventType',
             '$iri': None,
             'label': self.name,
             'feedback': self.feedback.to_json_object(),

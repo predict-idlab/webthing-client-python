@@ -3,6 +3,7 @@ from datetime import datetime
 from typing import *
 
 from webthing_client import utils
+from ..ontology import WETHING_ONTOLOGY_PREFIX
 from .operation.operation import Operation
 from .request import Request
 
@@ -11,7 +12,7 @@ T = TypeVar('T')
 OT = TypeVar('OT', bound=Operation)
 class Action(Request[T, OT], Generic[T, OT]):
 
-    type: ClassVar[str] = 'http://webthing.invalid/ontology/Action'
+    type: ClassVar[str] = WETHING_ONTOLOGY_PREFIX + 'Action'
 
 
     resolution_iri: Optional[str] = None

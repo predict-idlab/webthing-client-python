@@ -2,6 +2,7 @@ from __future__ import annotations # Allow referencing enclosing class in typing
 from datetime import datetime
 from typing import *
 
+from ..ontology import WETHING_ONTOLOGY_PREFIX
 from .stimulus import Stimulus
 from .feedback import Feedback
 from webthing_client import utils
@@ -9,7 +10,7 @@ from webthing_client import utils
 
 class Event:
 
-    type: ClassVar[str] = 'http://webthing.invalid/ontology/Event'
+    type: ClassVar[str] = WETHING_ONTOLOGY_PREFIX + 'Event'
 
 
     iri: str
@@ -61,7 +62,7 @@ class Event:
     
     def to_json_object_blank(self) -> Dict[str, Any]:
         return {
-            '$class': 'http://webthing.invalid/ontology/BlankEvent',
+            '$class': WETHING_ONTOLOGY_PREFIX + 'BlankEvent',
             '$iri': None,
             'resultTime': utils.to_iso_time_format(self.result_time),
             'wasOriginatedBy': [stimulus.to_json_object() for stimulus in self.stimuli],

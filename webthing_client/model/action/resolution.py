@@ -4,13 +4,14 @@ from enum import Enum
 from typing import *
 
 from webthing_client import utils
+from ..ontology import WETHING_ONTOLOGY_PREFIX
 from .request import Request
 from .base import Base
 
 
 class Resolution(Base):
 
-    type: ClassVar[str] = 'http://webthing.invalid/ontology/Resolution'
+    type: ClassVar[str] = WETHING_ONTOLOGY_PREFIX + 'Resolution'
 
 
     verdicts: List[Verdict]
@@ -50,7 +51,7 @@ class VerdictResultType(Enum):
 
 class Verdict():
 
-    type: ClassVar[str] = 'http://webthing.invalid/ontology/Verdict'
+    type: ClassVar[str] = WETHING_ONTOLOGY_PREFIX + 'Verdict'
 
     iri: ClassVar[str] = None
 
