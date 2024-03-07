@@ -56,7 +56,7 @@ class FeedbackSchema:
     @classmethod
     def from_json_object(cls, json_object: Dict[str, Any]) -> FeedbackSchema:
         # Remove all meta properties
-        properties: Dict[str, Any] = dict(json_object)
+        properties: Dict[str, Any] = dict(json_object.get('properties'))
         properties.pop('$iri', None)
         properties.pop('$class', None)
         required: List[str] = []
