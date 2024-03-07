@@ -91,7 +91,7 @@ class WebthingClient:
         """Subscribe to realtime Actions.
 
         Args:
-            callback (Callable[[Action[Any,Operation]]): Callback for new Actions.
+            callback (Callable[[Action[Any,Operation], None]): Callback for new Actions.
         """
         self._ws.subscribe('/actions', lambda json_str: callback(Action.from_json_object(json.loads(json_str))))
 
@@ -99,9 +99,17 @@ class WebthingClient:
         """Subscribe to realtime Requests.
 
         Args:
-            callback (Callable[[Request[Any,Operation]]): Callback for new Requests.
+            callback (Callable[[Request[Any,Operation], None]): Callback for new Requests.
         """
         self._ws.subscribe('/requests', lambda json_str: callback(Request.from_json_object(json.loads(json_str))))
+
+    def subscribe_to_resolutions(self, callback: Callable[[Resolution], None]) -> None:
+        """Subscribe to realtime Resolutions.
+
+        Args:
+            callback (Callable[[Resolution], None]): Callback for new Resolutions.
+        """
+        self._ws.subscribe('/resolutions', lambda json_str: callback(Resolution.from_json_object(json.loads(json_str))))
 
     def get_event(self, event_iri: str) -> Event:
         """Get event with IRI.
@@ -551,7 +559,7 @@ class WebthingAdminClient:
         response: requests.Response = requests.post(self._webthing_url + "/admin/replace_graph",
                                                     headers={'Content-type': 'text/turtle'},
                                                     params={'graph': encode_uri_component(graph_iri)},
-                                                    data=graph)
+                                                    data=graph.encode('utf-8'))
         return response.text
 
     def reload(self) -> None:
