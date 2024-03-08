@@ -31,7 +31,7 @@ class Event:
         self.feedback = feedback
 
     @classmethod
-    def from_json_object(cls, json_object: Dict[str, Any]) -> Stimulus:
+    def from_json_object(cls, json_object: Optional[Dict[str, Any]]) -> Event:
         return cls(
             json_object['$iri'],
             utils.parse_iso_time_format(json_object['resultTime']),
@@ -41,7 +41,7 @@ class Event:
         )
     
     @classmethod
-    def from_json_object_blank(cls, json_object: Dict[str, Any], iri: str) -> Stimulus:
+    def from_json_object_blank(cls, json_object: Dict[str, Any], iri: str) -> Event:
         return cls(
             iri,
             utils.parse_iso_time_format(json_object['resultTime']),
