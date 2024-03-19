@@ -3,7 +3,7 @@ import json
 from typing import *
 import requests
 
-from standard_api.api_handler import ApiRequester
+from .standard_api.api_handler import ApiRequester
 
 from .input.iri_input import IRIInput
 from .input.from_to_input import FromToInput
