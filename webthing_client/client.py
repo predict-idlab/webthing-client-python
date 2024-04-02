@@ -145,7 +145,7 @@ class WebthingClient:
         Returns:
             Event: Event.
         """
-        return self.get_event_user_view(self._user_iri)
+        return self.get_event_user_view(self._user_iri, event_iri)
     
     def get_events(self, from_: Optional[datetime]=None, to: Optional[datetime]=None) -> List[Event]:
         """Get all events in optional range.

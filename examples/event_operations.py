@@ -110,7 +110,7 @@ def update_event(webthing_fqdn: str, user_iri: str, event_iri: str, new_stimuli:
 
     # Get old event using view self
     # If known for sure that user has write permissions get_event may be used (slightly faster)
-    old_event: Event = client.get_event_self_view(client._user_iri, event_iri)
+    old_event: Event = client.get_event_self_view(event_iri)
 
     # All properties should be provided to update request, any unchanged properties are taken from event
     if (new_stimuli is None):
