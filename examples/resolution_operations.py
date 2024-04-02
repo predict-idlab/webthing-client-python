@@ -17,7 +17,7 @@ from webthing_client.model.user.user import User
 
 
 def create_simple_event_resolution(webthing_fqdn: str, user_iri: str, event_iri: str):
-    """Create a simple Resolution for all requests on event.
+    """Create a simple Resolution for all unresolved requests on event.
 
     Args:
         webthing_fqdn (str): Fully qualified domain name | 'webthing.example.com'
@@ -29,7 +29,7 @@ def create_simple_event_resolution(webthing_fqdn: str, user_iri: str, event_iri:
     print(f"Getting requests for event <{event_iri}>")
 
     # First get all requests for event (we know the return type is event)
-    event_requests: List[Request[Event, Operation]] = client.get_requests_resource(event_iri)
+    event_requests: List[Request[Event, Operation]] = client.get_unresolved_requests_resource(event_iri)
 
     print(f"Found {len(event_requests)} events")
     

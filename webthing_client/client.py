@@ -354,6 +354,28 @@ class WebthingClient:
             IRIInput.to_json_object(resource_iri))
         return [Request.from_json_object(request_object) for request_object in json_array]
     
+    def get_unresolved_requests(self) -> List[Request[Any, Operation]]:
+        """Get all unresolved requests.
+
+        Returns:
+            List[Request[Any, Operation]]: All unresolved requests.
+        """
+        json_array: List[Dict[str, Any]] = self._api_requester.call('get_unresolved_requests')
+        return [Request.from_json_object(request_object) for request_object in json_array]
+    
+    def get_unresolved_requests_resource(self, resource_iri: str) -> List[Request[Any, Operation]]:
+        """Get all unresolved requests linked to resource IRI.
+
+        Args:
+            resource_iri (str): The IRI of the resource.
+
+        Returns:
+            List[Request[Any, Operation]]: All linked unresolved requests.
+        """
+        json_array: List[Dict[str, Any]] = self._api_requester.call('get_unresolved_requests_resource',
+            IRIInput.to_json_object(resource_iri))
+        return [Request.from_json_object(request_object) for request_object in json_array]
+    
     def get_action(self, action_iri: str) -> Action:
         """Get the Action by IRI.
 

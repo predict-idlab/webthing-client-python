@@ -5,7 +5,6 @@ from typing import *
 
 from webthing_client import utils
 from ..ontology import WETHING_ONTOLOGY_PREFIX
-from .request import Request
 from .base import Base
 
 
@@ -24,7 +23,7 @@ class Resolution(Base):
         self.action_iri = action_iri
     
     @classmethod
-    def from_json_object(cls, json_object: Dict[str, Any]) -> Request:
+    def from_json_object(cls, json_object: Dict[str, Any]) -> Resolution:
         return cls(
             json_object['$iri'],
             utils.parse_iso_time_format(json_object['resultTime']),
@@ -58,22 +57,22 @@ class Verdict():
 
     verdict_result: VerdictResultType
 
-    request: Request[Any]
+    request_iri: str
 
-    def __init__(self, verdict_result: VerdictResultType, request: Request[Any]) -> None:
+    def __init__(self, verdict_result: VerdictResultType, request_iri: str) -> None:
         self.verdict_result = verdict_result
-        self.request = request
+        self.request_iri = request_iri
 
     @classmethod
-    def from_json_object(cls, json_object: Dict[str, Any]) -> Request:
+    def from_json_object(cls, json_object: Dict[str, Any]) -> Verdict:
         return cls(
             json_object['verdictResult'],
-            Request.from_json_object(json_object['request'])
+            json_object['request']
         )
     
     def to_json_object(self) -> Dict[str, Any]:
         return {
             '$class': self.type,
             '$iri': self.iri,
-            'request': self.request.to_json_object()
+            'request': self.request_iri
         }
