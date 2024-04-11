@@ -1,6 +1,7 @@
 from datetime import datetime
 import json
 from typing import *
+from rdflib import Graph
 import requests
 
 from .standard_api.api_handler import ApiRequester
@@ -24,9 +25,12 @@ from .model.action.request import Request
 from .model.action.operation.operation import Operation, CreateEventOperation, UpdateEventOperation, DeleteEventOperation, UpdateEventTypeOperation
 from .model.action.resolution import Resolution, VerdictResultType
 from .model.user.user import User
+from .model.property.observable_property import ObservableProperty
+from .model.system.sensor import Sensor
+from .model.system.system import System
 
 from .stomp import StompWebsocket
-from .utils import encode_uri_component
+from .utils import encode_uri_component, jsonld_object_to_graph
 
 
 class WebthingClient:
@@ -111,6 +115,85 @@ class WebthingClient:
         """
         self._ws.subscribe('/resolutions', lambda json_str: callback(Resolution.from_json_object(json.loads(json_str))))
 
+    def get_property(self, property_iri: str) -> ObservableProperty:
+        """Get ObservableProperty with IRI.
+
+        Args:
+            property_iri (str): IRI of property.
+
+        Returns:
+            ObservableProperty: ObservableProperty
+        """
+        json_object: Dict[str, Any] = self._api_requester.call('get_property',
+            IRIInput.to_json_object(property_iri))
+        return ObservableProperty.from_json_object(json_object)
+    
+    def get_property_graph(self, property_iri: str) -> Graph:
+        """Get ObservableProperty with IRI.
+
+        Args:
+            property_iri (str): IRI of property.
+
+        Returns:
+            Graph: ObservableProperty as Graph
+        """
+        jsonld: Dict[str, Any] = self._api_requester.call('get_property',
+            IRIInput.to_json_object(property_iri))
+        return jsonld_object_to_graph(jsonld)
+    
+    def get_properties(self) -> List[ObservableProperty]:
+        """Get all ObservableProperties.
+
+        Returns:
+            List[ObservableProperty]: ObservableProperties
+        """
+        json_array: List[Dict[str, Any]] = self._api_requester.call('get_properties', {})
+        return [ObservableProperty.from_json_object(property_object) for property_object in json_array]
+    
+    def get_sensor(self, sensor_iri: str) -> Sensor:
+        """Get Sensor with IRI.
+
+        Args:
+            sensor_iri (str): IRI of sensor.
+
+        Returns:
+            ObservableSensor: Sensor
+        """
+        json_object: Dict[str, Any] = self._api_requester.call('get_sensor',
+            IRIInput.to_json_object(sensor_iri))
+        return Sensor.from_json_object(json_object)
+    
+    def get_sensors(self) -> List[Sensor]:
+        """Get all Sensors.
+
+        Returns:
+            List[ObservableSensor]: Sensors
+        """
+        json_array: List[Dict[str, Any]] = self._api_requester.call('get_sensors', {})
+        return [Sensor.from_json_object(sensor_object) for sensor_object in json_array]
+    
+    def get_system(self, system_iri: str) -> System:
+        """Get System with IRI.
+
+        Args:
+            system_iri (str): IRI of system.
+
+        Returns:
+            ObservableSystem: System
+        """
+        json_object: Dict[str, Any] = self._api_requester.call('get_system',
+            IRIInput.to_json_object(system_iri))
+        return System.from_json_object(json_object)
+    
+    def get_systems(self) -> List[System]:
+        """Get all Systems.
+
+        Returns:
+            List[ObservableSystem]: Systems
+        """
+        json_array: List[Dict[str, Any]] = self._api_requester.call('get_systems', {})
+        return [System.from_json_object(system_object) for system_object in json_array]
+
     def get_event(self, event_iri: str) -> Event:
         """Get event with IRI.
 
@@ -137,6 +220,32 @@ class WebthingClient:
             IRIUserInput.to_json_object(user_iri, event_iri))
         return Event.from_json_object(json_object)
     
+    def get_event_graph(self, event_iri: str) -> Graph:
+        """Get event with IRI.
+
+        Args:
+            event_iri (str): IRI of event.
+
+        Returns:
+            Graph: Event as Graph.
+        """
+        jsonld: Dict[str, Any] = self._api_requester.call('get_event_jsonld',
+            IRIInput.to_json_object(event_iri))
+        return jsonld_object_to_graph(jsonld)
+    
+    def get_event_user_view_graph(self, event_iri: str) -> Graph:
+        """Get event with IRI as provided user.
+
+        Args:
+            event_iri (str): IRI of event.
+
+        Returns:
+            Graph: Event as Graph.
+        """
+        jsonld: Dict[str, Any] = self._api_requester.call('get_event_user_view_jsonld',
+            IRIInput.to_json_object(event_iri))
+        return jsonld_object_to_graph(jsonld)
+    
     def get_event_self_view(self, event_iri: str) -> Event:
         """Get event with view as user set in client.
 
@@ -157,7 +266,7 @@ class WebthingClient:
         Returns:
             List[Event]: Events in range.
         """
-        json_array: Dict[str, Any] = self._api_requester.call('get_events',
+        json_array: List[Dict[str, Any]] = self._api_requester.call('get_events',
             FromToInput.to_json_object(from_, to))
         return [Event.from_json_object(event_object) for event_object in json_array]
     
@@ -480,6 +589,15 @@ class WebthingClient:
             else:
                 verdicts[request.iri] = VerdictResultType.REJECTED
         return self.create_resolution(verdicts, operation)
+    
+    def get_users(self) -> List[User]:
+        """Get all the users.
+
+        Returns:
+            List[User]: Users
+        """
+        json_array = List[Dict[str, Any]] = self._api_requester.call('get_user', {})
+        return [User.from_json_object(user_object) for user_object in json_array]
     
     def get_user(self, user_iri: str) -> User:
         """Get the User associated with the IRI.

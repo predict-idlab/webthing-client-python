@@ -1,7 +1,9 @@
 from datetime import datetime, timezone
+import json
 from urllib.parse import quote
 from typing import *
 from dateutil import parser
+from rdflib import Graph
 
 
 def parse_iso_time_format(iso: Optional[str]) -> datetime:
@@ -52,3 +54,12 @@ def datetime_utc_now() -> datetime:
 
 def encode_uri_component(uri_component: Optional[str]):
     return quote(uri_component, safe="!~*'()") if uri_component is not None else None
+
+def jsonld_object_to_graph(jsonld_object: dict, graph: Graph=None) -> Graph:
+    """
+    Convert a json-ld object to Graph.
+    """
+    if graph is None:
+        graph = Graph()
+    # Is there a better way than to serialize and load?
+    return graph.parse(format='json-ld', data=json.dumps(jsonld_object))
