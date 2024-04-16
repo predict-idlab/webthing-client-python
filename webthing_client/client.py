@@ -14,6 +14,7 @@ from .input.action.event_input import CreateEventInput, UpdateEventInput
 from .input.action.event_type_input import UpdateEventTypeInput
 from .input.action.iri_user_input import IRIUserInput
 from .input.action.resolution_input import ResolutionInput
+from .input.replay.replay_input import ReplayInput
 from .model.webthing_observation import WebthingObservation
 from .model.event.event import Event
 from .model.event.stimulus import Stimulus
@@ -28,6 +29,7 @@ from .model.user.user import User
 from .model.property.observable_property import ObservableProperty
 from .model.system.sensor import Sensor
 from .model.system.system import System
+from .model.replay.replay import Replay
 
 from .stomp import StompWebsocket
 from .utils import encode_uri_component, jsonld_object_to_graph
@@ -706,3 +708,71 @@ class WebthingAdminClient:
         """Reload the webthing.
         """
         requests.Response = requests.get(self._webthing_url + "/admin/reload")
+
+
+class WebthingReplayClient:
+    """Class for replay endpoints on webthing."""
+
+    def __init__(self, webthing_fqdn: str, secure: bool=True):
+        """Client for replay endpoints.
+
+        Args:
+            webthing_fqdn (str): The fully quallified domain name e.g. 'webthing.example.com'.
+            secure (bool, optional):  If the Webthing uses TLS (https). Defaults to True.
+        """
+        self._webthing_fqdn: str = webthing_fqdn.strip('/')
+        self._secure: bool = secure
+
+        if self._secure:
+            self._webthing_url = f"https://{self._webthing_fqdn}"
+        else:
+            self._webthing_url = f"http://{self._webthing_fqdn}"
+
+        self._api_requester = ApiRequester(self._webthing_url)
+
+    def set_replay(self, from_historical: datetime,
+                         to_historical: datetime,
+                         from_replay: Optional[datetime] = None,
+                         speed_multiplier: Optional[float] = None,
+                         loop: Optional[bool] = None,
+                         scale_timestamps: Optional[bool] = None,
+                         seconds_interval: Optional[int] = None,
+                         replay_semantic_submissions_user_iris: Optional[List[str]] = None) -> Replay:
+        """Set the paramaters for replay.
+
+        Args:
+            from_historical (datetime): The historical window from.
+            to_historical (datetime): The historical window to.
+            from_replay (datetime): The current replay window from. Defaults to now.
+            speed_multiplier (Optional[float], optional): The approximate multiplier to speed up or slow down. Defaults to 1.
+            loop (Optional[bool], optional): Indicating if the replay is finished it should restart. Defaults to False.
+            scale_timestamps (Optional[bool], optional): If the transformed historical timestamps should be scaled depending on speed, if true will change the difference between timestamps,
+                if false will just move timestamps in time by the difference between historical and replay windows. Defaults to True.
+            seconds_interval (Optional[int], optional): The polling interval to use. Defaults to 5 seconds.
+            replay_semantic_submissions_user_iris (Optional[List[str]], optional): The IRI's of the users whose semantic submissions (requests,actions,resolutions) we must replay. Defaults to no users.
+
+        Returns:
+            Replay: The replay status.
+        """
+        json_object: Dict[str, Any] = self._api_requester.call('replay/set',
+            ReplayInput.to_json_object(from_historical, to_historical, from_replay, speed_multiplier,
+                                       loop, scale_timestamps, seconds_interval, replay_semantic_submissions_user_iris))
+        return Replay.from_json_object(json_object)
+
+    def start_replay(self) -> Replay:
+        """Start the replay form set parameters.
+
+        Returns:
+            Replay: The replay status.
+        """
+        json_object: Dict[str, Any] = self._api_requester.call('replay/start', {})
+        return Replay.from_json_object(json_object)
+    
+    def stop_replay(self) -> Replay:
+        """Stop the replay.
+
+        Returns:
+            Replay: The replay status.
+        """
+        json_object: Dict[str, Any] = self._api_requester.call('replay/stop', {})
+        return Replay.from_json_object(json_object)
