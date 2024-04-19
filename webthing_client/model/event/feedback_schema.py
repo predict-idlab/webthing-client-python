@@ -70,6 +70,6 @@ class FeedbackSchema:
             'required': required
         }
         type: str = None
-        if '$class' in json_object:
-            type = json_object['$class']['const']
+        if '$class' in json_object['properties']:
+            type = json_object['properties']['$class']['const']
         return cls(type, schema)
