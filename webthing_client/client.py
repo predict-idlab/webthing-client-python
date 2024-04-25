@@ -146,7 +146,7 @@ class WebthingClient:
             IRIInput.to_json_object(property_iri))
         return ObservableProperty.from_json_object(json_object)
     
-    def get_property_graph(self, property_iri: str) -> Graph:
+    def get_property_graph(self, property_iri: str, graph: Graph=None) -> Graph:
         """Get ObservableProperty with IRI.
 
         Args:
@@ -157,7 +157,7 @@ class WebthingClient:
         """
         jsonld: Dict[str, Any] = self._api_requester.call('get_property',
             IRIInput.to_json_object(property_iri))
-        return jsonld_object_to_graph(jsonld)
+        return jsonld_object_to_graph(jsonld, graph)
     
     def get_properties(self) -> List[ObservableProperty]:
         """Get all ObservableProperties.
@@ -238,7 +238,7 @@ class WebthingClient:
             IRIUserInput.to_json_object(user_iri, event_iri))
         return Event.from_json_object(json_object)
     
-    def get_event_graph(self, event_iri: str) -> Graph:
+    def get_event_graph(self, event_iri: str, graph: Graph=None) -> Graph:
         """Get event with IRI.
 
         Args:
@@ -249,9 +249,9 @@ class WebthingClient:
         """
         jsonld: Dict[str, Any] = self._api_requester.call('get_event_jsonld',
             IRIInput.to_json_object(event_iri))
-        return jsonld_object_to_graph(jsonld)
+        return jsonld_object_to_graph(jsonld, graph)
     
-    def get_event_user_view_graph(self, user_iri: str, event_iri: str) -> Graph:
+    def get_event_user_view_graph(self, user_iri: str, event_iri: str, graph: Graph=None) -> Graph:
         """Get event with IRI as provided user.
 
         Args:
@@ -263,7 +263,7 @@ class WebthingClient:
         """
         jsonld: Dict[str, Any] = self._api_requester.call('get_event_user_view_jsonld',
             IRIUserInput.to_json_object(user_iri, event_iri))
-        return jsonld_object_to_graph(jsonld)
+        return jsonld_object_to_graph(jsonld, graph)
     
     def get_event_self_view(self, event_iri: str) -> Event:
         """Get event with view as user set in client.
