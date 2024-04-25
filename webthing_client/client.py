@@ -251,17 +251,18 @@ class WebthingClient:
             IRIInput.to_json_object(event_iri))
         return jsonld_object_to_graph(jsonld)
     
-    def get_event_user_view_graph(self, event_iri: str) -> Graph:
+    def get_event_user_view_graph(self, user_iri: str, event_iri: str) -> Graph:
         """Get event with IRI as provided user.
 
         Args:
+            user_iri (str): The IRI of the user.
             event_iri (str): IRI of event.
 
         Returns:
             Graph: Event as Graph.
         """
         jsonld: Dict[str, Any] = self._api_requester.call('get_event_user_view_jsonld',
-            IRIInput.to_json_object(event_iri))
+            IRIUserInput.to_json_object(user_iri, event_iri))
         return jsonld_object_to_graph(jsonld)
     
     def get_event_self_view(self, event_iri: str) -> Event:
