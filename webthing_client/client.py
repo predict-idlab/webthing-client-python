@@ -1,6 +1,8 @@
+from __future__ import annotations # Allow referencing enclosing class in typings
+from typing import *
 from datetime import datetime
 import json
-from typing import *
+import re
 from rdflib import Graph
 import requests
 
@@ -39,8 +41,7 @@ class WebthingClient:
     """Client for interacting with a Webthing."""
 
     def __init__(self, webthing_fqdn: str, user_iri: Optional[str]=None, secure: bool=True, websocket: bool=True):
-        """
-        Client for interacting with a Webthing.
+        """Client for interacting with a Webthing.
 
         Args:
             webthing_fqdn (str): The fully quallified domain name e.g. 'webthing.example.com'.
@@ -69,6 +70,21 @@ class WebthingClient:
             self._webthing_url = f"http://{self._webthing_fqdn}"
 
         self._api_requester = ApiRequester(self._webthing_url)
+
+    @classmethod
+    def url(cls, url: str, user_iri: Optional[str]=None, websocket: bool=True) -> WebthingClient:
+        """Client for interacting with a Webthing from url.
+
+        Args:
+            url (str): The url of the webthing e.g. 'https://webthing.example.com'.
+            user_iri (Optional[str]): The user IRI to use when performing actions if None will fail if performing actions.
+            websocket (bool, optional): If the websocket should be opened. Defaults to True.
+                                        All websocket (subcribe) related functions will fail if set to False.
+        """
+        # Determine if secure or not
+        secure: bool = not url.startswith("http://")
+        url_parser = re.compile(r"https?://")
+        return WebthingClient(url_parser.sub('', url), user_iri=user_iri, secure=secure, websocket=websocket)
 
     PT = TypeVar('PT', dict, list, str, int, float, None, bool)
     @classmethod
@@ -669,6 +685,17 @@ class WebthingAdminClient:
         else:
             self._webthing_url = f"http://{self._webthing_fqdn}"
 
+    @classmethod
+    def url(cls, url: str) -> WebthingAdminClient:
+        """Client for admin endpoints from url.
+
+        Args:
+            url (str): The url of the webthing e.g. 'https://webthing.example.com'.
+        """
+        # Determine if secure or not
+        secure: bool = not url.startswith("http://")
+        url_parser = re.compile(r"https?://")
+        return WebthingAdminClient(url_parser.sub('', url), secure=secure)
 
     def get_graph(self, graph_iri: Optional[str]) -> str:
         """Get the graph with graph IRI, if graph_iri is null then get the default graph.
@@ -729,6 +756,18 @@ class WebthingReplayClient:
             self._webthing_url = f"http://{self._webthing_fqdn}"
 
         self._api_requester = ApiRequester(self._webthing_url)
+
+    @classmethod
+    def url(cls, url: str) -> WebthingAdminClient:
+        """Client for replay endpoints from url.
+
+        Args:
+            url (str): The url of the webthing e.g. 'https://webthing.example.com'.
+        """
+        # Determine if secure or not
+        secure: bool = not url.startswith("http://")
+        url_parser = re.compile(r"https?://")
+        return WebthingAdminClient(url_parser.sub('', url), secure=secure)
 
     def set_replay(self, from_historical: datetime,
                          to_historical: datetime,
