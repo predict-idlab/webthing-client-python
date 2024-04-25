@@ -155,7 +155,7 @@ class WebthingClient:
         Returns:
             Graph: ObservableProperty as Graph
         """
-        jsonld: Dict[str, Any] = self._api_requester.call('get_property',
+        jsonld: Dict[str, Any] = self._api_requester.call('get_property_jsonld',
             IRIInput.to_json_object(property_iri))
         return jsonld_object_to_graph(jsonld, graph)
     
