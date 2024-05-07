@@ -1,5 +1,5 @@
 from __future__ import annotations # Allow referencing enclosing class in typings
-from typing import *
+from typing import Dict, Optional, Any, ClassVar
 
 from ..ontology import WETHING_ONTOLOGY_PREFIX
 
@@ -40,7 +40,7 @@ class UserSettings:
 
     type: ClassVar[str] = WETHING_ONTOLOGY_PREFIX + 'UserSettings'
 
-    iri: ClassVar[str] = None
+    iri: ClassVar[None] = None
 
 
     write_permission: bool

@@ -1,5 +1,5 @@
 from __future__ import annotations # Allow referencing enclosing class in typings
-from typing import *
+from typing import List, Dict, Any
 from abc import ABC
 
 from ...model.event.stimulus import Stimulus

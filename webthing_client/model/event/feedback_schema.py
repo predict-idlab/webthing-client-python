@@ -1,5 +1,5 @@
 from __future__ import annotations # Allow referencing enclosing class in typings
-from typing import *
+from typing import List, Dict, Union, Optional, Any, cast
 
 import jsonschema
 
@@ -56,12 +56,12 @@ class FeedbackSchema:
     @classmethod
     def from_json_object(cls, json_object: Dict[str, Any]) -> FeedbackSchema:
         # Remove all meta properties
-        properties: Dict[str, Any] = dict(json_object.get('properties'))
+        properties: Dict[str, Any] = dict(cast(Dict[str,Dict[str,Dict[str,Any]]], json_object.get('properties')))
         properties.pop('$iri', None)
         properties.pop('$class', None)
         required: List[str] = []
         if 'required' in json_object:
-            required = list(json_object.get('required'))
+            required = list(cast(List[str], json_object.get('required')))
             required = list(set(required) - set(['$iri','$class']))
         schema: Dict[str, Any] = {
             '$schema': json_object['$schema'],
@@ -69,7 +69,7 @@ class FeedbackSchema:
             'properties': properties,
             'required': required
         }
-        type: str = None
+        type: str | None = None
         if '$class' in json_object['properties']:
             type = json_object['properties']['$class']['const']
         return cls(type, schema)

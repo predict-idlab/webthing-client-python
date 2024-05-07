@@ -1,4 +1,4 @@
-from typing import *
+from typing import Any, cast
 import json
 import textwrap
 
@@ -24,7 +24,7 @@ def callback(request: Request[Any, Operation]) -> None:
 
     # Only do something when create event request
     if request.operation.is_type(CreateEventOperation):
-        create_event_request: Request[Event, CreateEventOperation] = request
+        create_event_request: Request[Event, CreateEventOperation] = cast(Request[Event, CreateEventOperation], request)
         print(f"Got CreateEvent Request for event:")
         print(textwrap.indent(json.dumps(create_event_request.operation.create.to_json_object(), indent=2), "  "))
 

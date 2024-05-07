@@ -1,5 +1,5 @@
 from __future__ import annotations # Allow referencing enclosing class in typings
-from typing import *
+from typing import Dict, Optional, Any, ClassVar
 
 from .observation import Observation
 
@@ -8,7 +8,7 @@ class Stimulus:
 
     type: ClassVar[str]  = 'http://www.w3.org/ns/ssn/Stimulus'
 
-    iri: ClassVar[str] = None
+    iri: ClassVar[None] = None
 
 
     property_iri: str

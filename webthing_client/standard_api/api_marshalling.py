@@ -3,7 +3,7 @@ try:
     from flask_restx import Api
 except ImportError:
     import werkzeug
-    werkzeug.cached_property = werkzeug.utils.cached_property
+    werkzeug.cached_property = werkzeug.utils.cached_property # type: ignore
     from flask_restx import Api
 from flask_restx import fields, OrderedModel, Model
 

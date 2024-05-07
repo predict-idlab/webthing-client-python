@@ -2,7 +2,7 @@ from argparse import Action
 from datetime import datetime
 import json
 import textwrap
-from typing import *
+from typing import Optional
 
 from webthing_client.client import WebthingClient
 from webthing_client.model.action.operation.operation import UpdateEventTypeOperation
@@ -30,7 +30,7 @@ def update_event_type(webthing_fqdn: str, user_iri: str, event_type_iri: str, ne
 
     # Get old eventType using view self
     # If known for sure that user has write permissions get_event_type may be used (slightly faster)
-    old_event_type: EventType = client.get_event_type_user_view(client._user_iri, event_type_iri)
+    old_event_type: EventType = client.get_event_type_self_view(event_type_iri)
 
     # All properties should be provided to update request, any unchanged properties are taken from event
     if (new_name is None):

@@ -1,5 +1,5 @@
 from __future__ import annotations # Allow referencing enclosing class in typings
-from typing import *
+from typing import Dict, Any, ClassVar, TypeVar, Generic
 from abc import ABCMeta, abstractmethod
 
 from ...ontology import WETHING_ONTOLOGY_PREFIX
@@ -12,7 +12,7 @@ class Operation(Generic[T], metaclass=ABCMeta):
 
     type: ClassVar[str]
 
-    iri: ClassVar[str] = None
+    iri: ClassVar[None] = None
 
 
     resource_iri: str
@@ -29,7 +29,7 @@ class Operation(Generic[T], metaclass=ABCMeta):
             T: Type of the resource.
         """
         # First get the base (Operation), then get T
-        return get_args(cls.__orig_bases__[0])[0]
+        return get_args(cls.__orig_bases__[0])[0] # type: ignore
 
     @classmethod
     def is_resource_type(cls, type: Any) -> bool:
@@ -57,9 +57,8 @@ class Operation(Generic[T], metaclass=ABCMeta):
         """
         return cls == type
 
-    JT = TypeVar('JT', bound=Any)
     @classmethod
-    def from_json_object(cls, json_object: Dict[str, Any]) -> Operation[JT]:
+    def from_json_object(cls, json_object: Dict[str, Any]) -> Operation[Any]:
         type: str = json_object['$class']
         if type == CreateEventOperation.type:
             return CreateEventOperation.from_json_object(json_object)
@@ -72,7 +71,7 @@ class Operation(Generic[T], metaclass=ABCMeta):
         raise ValueError(f'No operation found for type <{type}>!')
     
     @abstractmethod
-    def to_json_object() -> Dict[str, Any]:
+    def to_json_object(self) -> Dict[str, Any]:
         ...
 
 

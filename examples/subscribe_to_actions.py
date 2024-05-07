@@ -1,4 +1,4 @@
-from typing import *
+from typing import Any, cast
 import json
 import textwrap
 
@@ -24,7 +24,7 @@ def callback(action: Action[Any,Operation]) -> None:
 
     # Only do something when create event action
     if action.operation.is_type(CreateEventOperation):
-        create_event_action: Action[Event, CreateEventOperation] = action
+        create_event_action: Action[Event, CreateEventOperation] = cast(Action[Event, CreateEventOperation], action)
         print(f"Got CreateEvent Action for event:")
         print(textwrap.indent(json.dumps(create_event_action.operation.create.to_json_object(), indent=2), "  "))
 

@@ -1,6 +1,6 @@
 from __future__ import annotations # Allow referencing enclosing class in typings
 from datetime import datetime
-from typing import *
+from typing import List, Dict, Optional, Any
 
 from webthing_client import utils
 
@@ -10,7 +10,7 @@ class ReplayInput:
     @classmethod
     def to_json_object(cls, from_historical: datetime,
                             to_historical: datetime,
-                            from_replay: datetime,
+                            from_replay: Optional[datetime],
                             speed_multiplier: Optional[float] = None,
                             loop: Optional[bool] = None,
                             scale_timestamps: Optional[bool] = None,

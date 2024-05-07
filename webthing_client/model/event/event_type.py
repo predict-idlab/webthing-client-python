@@ -1,5 +1,5 @@
 from __future__ import annotations # Allow referencing enclosing class in typings
-from typing import *
+from typing import Dict, Any, ClassVar
 
 from ..ontology import WETHING_ONTOLOGY_PREFIX
 from .feedback import Feedback
@@ -20,7 +20,7 @@ class EventType:
 
     event_feedback_iri: str
 
-    def __init__(self, iri: str, name: str, feedback: str, type_feedback_iri: str, event_feedback_iri: str) -> None:
+    def __init__(self, iri: str, name: str, feedback: Feedback, type_feedback_iri: str, event_feedback_iri: str) -> None:
         self.iri = iri
         self.name = name
         self.feedback = feedback

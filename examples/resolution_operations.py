@@ -1,18 +1,12 @@
-from datetime import datetime
 import json
 import textwrap
-from typing import *
+from typing import List
 
 from webthing_client.client import WebthingClient
 from webthing_client.model.action.operation.operation import Operation
 from webthing_client.model.action.request import Request
 from webthing_client.model.action.resolution import Resolution
 from webthing_client.model.event.event import Event
-from webthing_client.model.event.event_type import EventType
-from webthing_client.model.event.feedback import Feedback
-from webthing_client.model.event.feedback_schema import FeedbackSchema
-from webthing_client.model.event.observation import Observation
-from webthing_client.model.event.stimulus import Stimulus
 from webthing_client.model.user.user import User
 
 

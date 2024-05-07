@@ -1,6 +1,6 @@
 from __future__ import annotations # Allow referencing enclosing class in typings
 from datetime import datetime
-from typing import *
+from typing import List, Dict, Any, ClassVar
 
 from ..ontology import WETHING_ONTOLOGY_PREFIX
 from .stimulus import Stimulus
@@ -31,7 +31,7 @@ class Event:
         self.feedback = feedback
 
     @classmethod
-    def from_json_object(cls, json_object: Optional[Dict[str, Any]]) -> Event:
+    def from_json_object(cls, json_object: Dict[str, Any]) -> Event:
         return cls(
             json_object['$iri'],
             utils.parse_iso_time_format(json_object['resultTime']),

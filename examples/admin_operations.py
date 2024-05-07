@@ -1,5 +1,5 @@
 import textwrap
-from typing import *
+from typing import Optional
 
 from webthing_client.client import WebthingAdminClient
 

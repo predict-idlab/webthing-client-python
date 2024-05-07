@@ -1,6 +1,6 @@
 from __future__ import annotations # Allow referencing enclosing class in typings
 from datetime import datetime
-from typing import *
+from typing import Dict, Any, ClassVar, TypeVar, Generic
 
 from webthing_client import utils
 from ..ontology import WETHING_ONTOLOGY_PREFIX

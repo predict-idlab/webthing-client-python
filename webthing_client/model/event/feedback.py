@@ -1,10 +1,10 @@
 from __future__ import annotations # Allow referencing enclosing class in typings
-from typing import *
+from typing import Dict, Union, Optional, Any, ClassVar
 
 
 class Feedback:
 
-    iri: ClassVar[str] = None
+    iri: ClassVar[None] = None
 
 
     type: Optional[str] = None

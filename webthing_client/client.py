@@ -1,5 +1,5 @@
 from __future__ import annotations # Allow referencing enclosing class in typings
-from typing import *
+from typing import List, Dict, Optional, TypeVar, Callable, Any
 from datetime import datetime
 import json
 import re
@@ -52,7 +52,7 @@ class WebthingClient:
         """
         self._webthing_fqdn: str = webthing_fqdn.strip('/')
         self._secure: bool = secure
-        self._user_iri: str = user_iri
+        self._user_iri: Optional[str] = user_iri
 
         if self._secure:
             self._ws_uri = f"wss://{self._webthing_fqdn}/websocket-stomp"
@@ -98,6 +98,7 @@ class WebthingClient:
             property_iri (str): The IRI of the property.
             callback (Callable[[WebthingObservation[PT]], None]): Callback for new WebthingObservation.
         """
+        assert self._ws is not None
         self._ws.subscribe(f'/properties/{encode_uri_component(property_iri)}',
             lambda message: callback(WebthingClient._process_observation(message)))
 
@@ -107,6 +108,7 @@ class WebthingClient:
         Args:
             callback (Callable[[Event], None]): Callback for new Events.
         """
+        assert self._ws is not None
         self._ws.subscribe('/events', lambda json_str: callback(Event.from_json_object(json.loads(json_str))))
 
     def subscribe_to_actions(self, callback: Callable[[Action[Any,Operation]], None]) -> None:
@@ -115,6 +117,7 @@ class WebthingClient:
         Args:
             callback (Callable[[Action[Any,Operation], None]): Callback for new Actions.
         """
+        assert self._ws is not None
         self._ws.subscribe('/actions', lambda json_str: callback(Action.from_json_object(json.loads(json_str))))
 
     def subscribe_to_requests(self, callback: Callable[[Request[Any,Operation]], None]) -> None:
@@ -123,6 +126,7 @@ class WebthingClient:
         Args:
             callback (Callable[[Request[Any,Operation], None]): Callback for new Requests.
         """
+        assert self._ws is not None
         self._ws.subscribe('/requests', lambda json_str: callback(Request.from_json_object(json.loads(json_str))))
 
     def subscribe_to_resolutions(self, callback: Callable[[Resolution], None]) -> None:
@@ -131,6 +135,7 @@ class WebthingClient:
         Args:
             callback (Callable[[Resolution], None]): Callback for new Resolutions.
         """
+        assert self._ws is not None
         self._ws.subscribe('/resolutions', lambda json_str: callback(Resolution.from_json_object(json.loads(json_str))))
 
     def get_property(self, property_iri: str) -> ObservableProperty:
@@ -146,11 +151,12 @@ class WebthingClient:
             IRIInput.to_json_object(property_iri))
         return ObservableProperty.from_json_object(json_object)
     
-    def get_property_graph(self, property_iri: str, graph: Graph=None) -> Graph:
+    def get_property_graph(self, property_iri: str, graph: Optional[Graph]=None) -> Graph:
         """Get ObservableProperty with IRI.
 
         Args:
             property_iri (str): IRI of property.
+            graph (Optional[Graph]); The graph to insert to.
 
         Returns:
             Graph: ObservableProperty as Graph
@@ -238,11 +244,12 @@ class WebthingClient:
             IRIUserInput.to_json_object(user_iri, event_iri))
         return Event.from_json_object(json_object)
     
-    def get_event_graph(self, event_iri: str, graph: Graph=None) -> Graph:
+    def get_event_graph(self, event_iri: str, graph: Optional[Graph]=None) -> Graph:
         """Get event with IRI.
 
         Args:
             event_iri (str): IRI of event.
+            graph (Optional[Graph]); The graph to insert to.
 
         Returns:
             Graph: Event as Graph.
@@ -251,12 +258,13 @@ class WebthingClient:
             IRIInput.to_json_object(event_iri))
         return jsonld_object_to_graph(jsonld, graph)
     
-    def get_event_user_view_graph(self, user_iri: str, event_iri: str, graph: Graph=None) -> Graph:
+    def get_event_user_view_graph(self, user_iri: str, event_iri: str, graph: Optional[Graph]=None) -> Graph:
         """Get event with IRI as provided user.
 
         Args:
             user_iri (str): The IRI of the user.
             event_iri (str): IRI of event.
+            graph (Optional[Graph]); The graph to insert to.
 
         Returns:
             Graph: Event as Graph.
@@ -273,6 +281,7 @@ class WebthingClient:
         Returns:
             Event: Event.
         """
+        assert self._user_iri is not None
         return self.get_event_user_view(self._user_iri, event_iri)
     
     def get_events(self, from_: Optional[datetime]=None, to: Optional[datetime]=None) -> List[Event]:
@@ -313,6 +322,7 @@ class WebthingClient:
         Returns:
             List[Event]: Events in range for self.
         """
+        assert self._user_iri is not None
         return self.get_events_user_view(self._user_iri, from_, to)
 
     def create_event_request(self, stimuli: List[Stimulus], event_type_iri: str, feedback: Feedback) -> Request[Event, CreateEventOperation]:
@@ -326,6 +336,7 @@ class WebthingClient:
         Returns:
             Request[Event, CreateEventOperation]: Resulting request.
         """
+        assert self._user_iri is not None
         json_object: Dict[str, Any] = self._api_requester.call('create_event',
             CreateEventInput.to_json_object(self._user_iri, stimuli, event_type_iri, feedback))
         return Request.from_json_object(json_object)
@@ -342,6 +353,7 @@ class WebthingClient:
         Returns:
             Request[Event, UpdateEventOperation]: Resulting request.
         """
+        assert self._user_iri is not None
         json_object: Dict[str, Any] = self._api_requester.call('update_event',
             UpdateEventInput.to_json_object(self._user_iri, event_iri, stimuli, event_type_iri, feedback))
         return Request.from_json_object(json_object)
@@ -355,6 +367,7 @@ class WebthingClient:
         Returns:
             Request[Event, DeleteEventOperation]: Resulting request.
         """
+        assert self._user_iri is not None
         json_object: Dict[str, Any] = self._api_requester.call('delete_event',
             IRIUserInput.to_json_object(self._user_iri, event_iri))
         return Request.from_json_object(json_object)
@@ -395,6 +408,7 @@ class WebthingClient:
         Returns:
             EventType: Event Type view.
         """
+        assert self._user_iri is not None
         return self.get_event_type_user_view(self._user_iri, event_type_iri)
     
     def get_event_types(self) -> List[EventType]:
@@ -417,6 +431,7 @@ class WebthingClient:
         Returns:
             Request[EventType, UpdateEventTypeOperation]: Resulting request.
         """
+        assert self._user_iri is not None
         json_object: Dict[str, Any] = self._api_requester.call('update_event_type',
             UpdateEventTypeInput.to_json_object(self._user_iri, event_type_iri, name, feedback))
         return Request.from_json_object(json_object)
@@ -584,6 +599,7 @@ class WebthingClient:
         Returns:
             Resolution: The completed resolution.
         """
+        assert self._user_iri is not None
         json_object: Dict[str, Any] = self._api_requester.call('create_resolution',
             ResolutionInput.to_json_object(self._user_iri, verdicts, operation))
         return Resolution.from_json_object(json_object)
@@ -599,7 +615,7 @@ class WebthingClient:
         Returns:
             Resolution: The completed resolution.
         """
-        operation: Operation[Any] = None
+        operation: Optional[Operation[Any]] = None
         verdicts: Dict[str,VerdictResultType] = {}
         for request in requests:
             if request.iri == accapted_request_iri:
@@ -615,7 +631,7 @@ class WebthingClient:
         Returns:
             List[User]: Users
         """
-        json_array = List[Dict[str, Any]] = self._api_requester.call('get_user', {})
+        json_array: List[Dict[str, Any]] = self._api_requester.call('get_user', {})
         return [User.from_json_object(user_object) for user_object in json_array]
     
     def get_user(self, user_iri: str) -> User:
@@ -637,6 +653,7 @@ class WebthingClient:
         Returns:
             User: The User
         """
+        assert self._user_iri is not None
         return self.get_user(self._user_iri)
     
     def get_observations(self, property_iri: str, from_time: Optional[datetime]=None, to_time: Optional[datetime]=None) -> List[WebthingObservation[PT]]:
@@ -716,8 +733,7 @@ class WebthingAdminClient:
         Args:
             graph_iri (Optional[str]): The graph IRI
         """
-        response: requests.Response = requests.get(self._webthing_url + "/admin/delete_graph", params={'graph': encode_uri_component(graph_iri)})
-        return response.text
+        requests.get(self._webthing_url + "/admin/delete_graph", params={'graph': encode_uri_component(graph_iri)})
     
     def replace_graph(self, graph: str, graph_iri: Optional[str]) -> None:
         """Replace the graph with graph IRI, if graph_iri is null then replace the default graph.
@@ -726,11 +742,10 @@ class WebthingAdminClient:
             graph (str): The new graph in Turtle
             graph_iri (Optional[str]): The graph IRI
         """
-        response: requests.Response = requests.post(self._webthing_url + "/admin/replace_graph",
-                                                    headers={'Content-type': 'text/turtle'},
-                                                    params={'graph': encode_uri_component(graph_iri)},
-                                                    data=graph.encode('utf-8'))
-        return response.text
+        requests.post(self._webthing_url + "/admin/replace_graph",
+                    headers={'Content-type': 'text/turtle'},
+                    params={'graph': encode_uri_component(graph_iri)},
+                    data=graph.encode('utf-8'))
 
     def reload(self) -> None:
         """Reload the webthing.

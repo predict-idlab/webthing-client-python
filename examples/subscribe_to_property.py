@@ -19,4 +19,4 @@ def subscribe_to_property(webthing_fqdn: str, property_iri: str):
         property_iri (str): Property IRI | 'http://test.invalid/property/1'
     """
     client = WebthingClient(webthing_fqdn)
-    client.subscribe_to_property(callback)
+    client.subscribe_to_property(property_iri, callback)

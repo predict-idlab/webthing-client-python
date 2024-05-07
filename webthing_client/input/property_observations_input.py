@@ -1,6 +1,6 @@
 from __future__ import annotations # Allow referencing enclosing class in typings
 from datetime import datetime
-from typing import *
+from typing import Dict, Optional, Any
 from abc import ABC
 
 from webthing_client import utils

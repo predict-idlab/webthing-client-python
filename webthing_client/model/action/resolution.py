@@ -1,7 +1,7 @@
 from __future__ import annotations # Allow referencing enclosing class in typings
 from datetime import datetime
 from enum import Enum
-from typing import *
+from typing import List, Dict, Optional, Any, ClassVar
 
 from webthing_client import utils
 from ..ontology import WETHING_ONTOLOGY_PREFIX
@@ -52,7 +52,7 @@ class Verdict():
 
     type: ClassVar[str] = WETHING_ONTOLOGY_PREFIX + 'Verdict'
 
-    iri: ClassVar[str] = None
+    iri: ClassVar[None] = None
 
 
     verdict_result: VerdictResultType

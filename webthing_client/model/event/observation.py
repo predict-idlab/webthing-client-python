@@ -1,6 +1,6 @@
 from __future__ import annotations # Allow referencing enclosing class in typings
 from datetime import datetime
-from typing import *
+from typing import Dict, Any, ClassVar
 
 from webthing_client import utils
 
@@ -9,7 +9,7 @@ class Observation:
 
     type: ClassVar[str] = 'http://www.w3.org/ns/sosa/Observation'
 
-    iri: ClassVar[str] = None
+    iri: ClassVar[None] = None
 
 
     result_time: datetime

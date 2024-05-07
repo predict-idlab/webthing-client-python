@@ -1,5 +1,5 @@
 from __future__ import annotations # Allow referencing enclosing class in typings
-from typing import *
+from typing import Dict, Optional, Any
 from abc import ABC
 
 from ...model.action.operation.operation import Operation

@@ -1,6 +1,6 @@
 from __future__ import annotations # Allow referencing enclosing class in typings
 from datetime import datetime
-from typing import *
+from typing import Dict, Optional, Any, ClassVar, TypeVar, Generic
 
 from webthing_client import utils
 from ..ontology import WETHING_ONTOLOGY_PREFIX
@@ -17,7 +17,7 @@ class Action(Request[T, OT], Generic[T, OT]):
 
     resolution_iri: Optional[str] = None
 
-    def __init__(self, iri: str, result_time: datetime, user_iri: str, operation: Operation[T], resolution_iri: Optional[str]) -> None:
+    def __init__(self, iri: str, result_time: datetime, user_iri: str, operation: OT, resolution_iri: Optional[str]) -> None:
         super().__init__(iri, result_time, user_iri, operation)
         self.resolution_iri = resolution_iri
     

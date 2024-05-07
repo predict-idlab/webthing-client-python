@@ -1,7 +1,7 @@
 from datetime import datetime
 import json
 import textwrap
-from typing import *
+from typing import List, Dict, Optional, Any
 
 from webthing_client.client import WebthingClient
 from webthing_client.model.action.operation.operation import CreateEventOperation, UpdateEventOperation, DeleteEventOperation

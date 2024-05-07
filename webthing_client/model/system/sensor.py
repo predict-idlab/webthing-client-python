@@ -1,5 +1,5 @@
 from __future__ import annotations # Allow referencing enclosing class in typings
-from typing import *
+from typing import List, Dict, Optional, Any, ClassVar
 
 
 class Sensor:
@@ -13,9 +13,10 @@ class Sensor:
 
     property_iris: List[str] = []
 
-    def __init__(self, name: str, property_iris: List[str]) -> None:
-        name = name,
-        property_iris = property_iris
+    def __init__(self, iri: str, name: Optional[str], property_iris: List[str]) -> None:
+        self.iri = iri
+        self.name = name
+        self.property_iris = property_iris
 
     @classmethod
     def from_json_object(cls, json_object: Dict[str, Any]) -> Sensor:

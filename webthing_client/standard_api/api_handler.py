@@ -1,7 +1,7 @@
 import logging
 import json
 import inspect
-from typing import Any, Callable, Tuple
+from typing import Dict, Optional, Any, Callable, Tuple
 from enum import Enum
 import traceback
 from abc import ABC
@@ -72,8 +72,8 @@ class ApiRequester(ApiBase):
 
     def __init__(self,  base_api_endpoint: str,
                         default_metadata: dict = {},
-                        before_request: Callable[[], None] = None,
-                        after_request: Callable[[], None] = None,
+                        before_request: Optional[Callable[[], None]] = None,
+                        after_request:  Optional[Callable[[], None]] = None,
                         headers: dict = {}):
         super().__init__()
         self._base_api_endpoint = base_api_endpoint.rstrip('/')
@@ -151,9 +151,9 @@ class ApiResponder(ApiBase):
     Class that helps returning data as standard api interface format.
     """
 
-    def __init__(self,  process_metadata: Callable[[dict], None] = None,
-                        before_processing: Callable[[], None] = None,
-                        after_processing: Callable[[], None] = None):
+    def __init__(self,  process_metadata:  Optional[Callable[[dict], None]] = None,
+                        before_processing:  Optional[Callable[[], None]] = None,
+                        after_processing:  Optional[Callable[[], None]] = None):
         """
         Before processing should accept full json request body object and return one, 
         after processing should accept wrapped json response body object and return one.
@@ -163,7 +163,7 @@ class ApiResponder(ApiBase):
         self._before_processing = before_processing
         self._after_processing = after_processing
 
-    def _create_response(self, status: ApiResponseStatus, endpoint: str, message: str, data: Any) -> Tuple[dict, int]:
+    def _create_response(self, status: ApiResponseStatus, endpoint: str, message: str, data: Any) -> Dict[str,str]:
         """
         Returns wrapped response body.
         """
@@ -191,7 +191,7 @@ class ApiResponder(ApiBase):
             result = function(request_body['data'])
 
             response_status = ApiResponseStatus.SUCCESS
-            response_body = self._create_response(response_status, endpoint, "Success", result,)
+            response_body = self._create_response(response_status, endpoint, "Success", result)
 
         except ApiRequestingException as e:
             # This component was calling a remote component via the api and it failed on the remote component
@@ -240,7 +240,7 @@ class ApiForwarder(ApiBase):
     Class that receives api responses and forwards them to another endpoint.
     """
 
-    def __init__(self, base_api_endpoint: str, transform_metadata: Callable[[dict], dict] = None):
+    def __init__(self, base_api_endpoint: str, transform_metadata: Optional[Callable[[dict], dict]] = None):
         super().__init__()
         self._logger = logging.getLogger(__name__)
         self._requester = ApiRequester(base_api_endpoint)

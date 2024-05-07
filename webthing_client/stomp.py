@@ -1,4 +1,4 @@
-from typing import Callable, Dict, List
+from typing import Callable, Dict, List, Optional, cast
 import threading
 import time
 
@@ -66,12 +66,13 @@ class StompWebsocket:
             self._reconnect_message = None
             return
         elif message['cmd'] == 'MESSAGE':
-            destination = message['headers']['destination']
+            headers: Dict[str,str] = cast(Dict[str,str], message['headers'])
+            destination = headers['destination']
             if destination != None and destination in self._subscriptions:
                 callbacks = self._subscriptions[destination]
                 # Call all callbacks
                 for callback in callbacks:
-                    callback(message['body'])
+                    callback(cast(str, message['body']))
 
     def _connected_message(self):
         self._connected = True
@@ -88,7 +89,7 @@ class StompWebsocket:
         else:
             print(f"WebsocketClient <{self._ws_uri}> error: {error}")
 
-    def _on_close(self, ws: WebSocketApp, status_code: int, message: str) -> None:
+    def _on_close(self, ws: WebSocketApp, status_code: Optional[int], message: Optional[str]) -> None:
         # Set connected to false and set backlog
         self._connected = False
         self._backlog_subscriptions.update(self._subscriptions)

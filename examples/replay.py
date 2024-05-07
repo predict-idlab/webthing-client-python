@@ -1,6 +1,5 @@
 from datetime import datetime
 import json
-from typing import *
 
 from webthing_client.client import WebthingReplayClient
 from webthing_client.model.replay.replay import Replay
