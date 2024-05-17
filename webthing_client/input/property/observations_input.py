@@ -6,7 +6,7 @@ from abc import ABC
 from webthing_client import utils
 
 
-class PropertyObservationsInput(ABC):
+class ObservationsInput(ABC):
 
     @classmethod
     def to_json_object(cls, property_iri: str, from_time: Optional[datetime]=None, to_time: Optional[datetime]=None) -> Dict[str, Any]:

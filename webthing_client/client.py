@@ -10,7 +10,8 @@ from .standard_api.api_handler import ApiRequester
 
 from .input.iri_input import IRIInput
 from .input.from_to_input import FromToInput
-from .input.property_observations_input import PropertyObservationsInput
+from .input.property.observations_input import ObservationsInput
+from .input.property.properties_input import PropertiesInput
 from .input.action.from_to_user_input import FromToUserInput
 from .input.action.event_input import CreateEventInput, UpdateEventInput
 from .input.action.event_type_input import UpdateEventTypeInput
@@ -165,14 +166,29 @@ class WebthingClient:
             IRIInput.to_json_object(property_iri))
         return jsonld_object_to_graph(jsonld, graph)
     
-    def get_properties(self) -> List[ObservableProperty]:
-        """Get all ObservableProperties.
+    def get_properties(self, property_iris: Optional[List[str]]=None) -> List[ObservableProperty]:
+        """Get all ObservableProperties or if property IRIs are provided those properties.
+
+        Args:
+            property_iris (Optional[List[str]]): The properties to retrieve. Defaults to None.
 
         Returns:
             List[ObservableProperty]: ObservableProperties
         """
-        json_array: List[Dict[str, Any]] = self._api_requester.call('get_properties', {})
+        if (property_iris is not None and len(property_iris) == 0):
+            return []
+        json_array: List[Dict[str, Any]] = self._api_requester.call('get_properties',
+            PropertiesInput.to_json_object(property_iris))
         return [ObservableProperty.from_json_object(property_object) for property_object in json_array]
+    
+    def get_properties_count(self) -> int:
+        """Get the count of properties, useful to check if processing all properties at once is too slow, filter on systems and sensors.
+
+        Returns:
+            int: The properties count.
+        """
+        count: int = self._api_requester.call('get_properties_count', {})
+        return count
     
     def get_sensor(self, sensor_iri: str) -> Sensor:
         """Get Sensor with IRI.
@@ -668,7 +684,7 @@ class WebthingClient:
             List[WebthingObservation[PT]]: The observations.
         """
         json_array: List[Dict[str, Any]] = self._api_requester.call('get_property_observations',
-            PropertyObservationsInput.to_json_object(property_iri, from_time, to_time))
+            ObservationsInput.to_json_object(property_iri, from_time, to_time))
         return [WebthingObservation.from_json_object(observation_object) for observation_object in json_array]
     
     def get_last_observation(self, property_iri: str) -> Optional[WebthingObservation]:
