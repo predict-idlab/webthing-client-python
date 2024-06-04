@@ -790,7 +790,7 @@ class WebthingReplayClient:
         self._api_requester = ApiRequester(self._webthing_url)
 
     @classmethod
-    def url(cls, url: str) -> WebthingAdminClient:
+    def url(cls, url: str) -> WebthingReplayClient:
         """Client for replay endpoints from url.
 
         Args:
@@ -799,7 +799,7 @@ class WebthingReplayClient:
         # Determine if secure or not
         secure: bool = not url.startswith("http://")
         url_parser = re.compile(r"https?://")
-        return WebthingAdminClient(url_parser.sub('', url), secure=secure)
+        return WebthingReplayClient(url_parser.sub('', url), secure=secure)
 
     def set_replay(self, from_historical: datetime,
                          to_historical: datetime,
