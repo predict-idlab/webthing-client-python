@@ -686,19 +686,6 @@ class WebthingClient:
         json_array: List[Dict[str, Any]] = self._api_requester.call('get_property_observations',
             ObservationsInput.to_json_object(property_iri, from_time, to_time))
         return [WebthingObservation.from_json_object(observation_object) for observation_object in json_array]
-    
-    def get_last_observation(self, property_iri: str) -> Optional[WebthingObservation]:
-        """Get the last Observation for the property IRI.
-
-        Args:
-            property_iri (str): Property IRI
-
-        Returns:
-            Optional[WebthingObservation]: Observation or None
-        """
-        json_object: Dict[str, Any] = self._api_requester.call('get_property_last_observation',
-            IRIInput.to_json_object(property_iri))
-        return WebthingObservation.from_json_object(json_object)
 
 
 class WebthingAdminClient:
